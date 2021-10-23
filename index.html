@@ -3,17 +3,39 @@
 <head>
   <title>Weather App</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/style.css"> 
+  <link rel="stylesheet" href="assets/style.css">
+  <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+    ></script>
 </head>
 <body>
 
-  <form class="card m-2" style="width: 18rem">
-    <div class="form-group card-body">
-      <label for="location">Location</label>
-      <input type="text" class="form-control" id="location" placeholder="Enter a City">
+  <header class="jumbotron d-flex justify-content-center">
+    <h1>Weather Forecast</h1>
+  </header>
+
+  <main class="container">
+
+    <div id="search-block">
+      <form class="card m-2" style="width: 18rem">
+        <div class="form-group card-body">
+          <label for="location">Location</label>
+          <input type="text" class="form-control" id="location" placeholder="Enter a City">
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
+      </form>
+
+      <div id="searched-cities"></div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+
+    <div class="flex-d" id="weather-info">
+      <div class="card m-2" id="weather-summary"></div>
+      <div class="flex-d m-2" id="weather-day-cards"></div>
+    </div>
+
+  </main>
+
 
 </body>
 

@@ -10,13 +10,10 @@
     ></script>
 </head>
 <body>
-
   <header class="jumbotron d-flex justify-content-center">
     <h1>Weather Forecast</h1>
   </header>
-
   <main class="container">
-
     <div id="search-block">
       <form class="card m-2" style="width: 18rem">
         <div class="form-group card-body">
@@ -25,18 +22,18 @@
         </div>
         <button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
       </form>
-
       <div id="searched-cities"></div>
     </div>
 
-    <div class="flex-d" id="weather-info">
+    <div id="weather-info">
       <div class="card m-2" id="weather-summary"></div>
-      <div class="flex-d m-2" id="weather-day-cards"></div>
+      <div id="forecast-box">
+        <h2 id="forecast-title" style="display:none">5-Day Forecast</h2>
+        <div class="flex-d m-2" id="weather-day-cards"></div>
+      </div>
+      
     </div>
-
   </main>
-
-
 </body>
 
 <script src="assets/main.js"></script>

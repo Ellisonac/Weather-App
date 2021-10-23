@@ -6,10 +6,6 @@ var uvi;
 var citiesList = new Set();
 
 //Call format: https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
-// Check out https://openweathermap.org/forecast5 for multi-day
-// May need new call for UVI
-
 function callWeatherApi(e) {
   e.preventDefault();
 
@@ -71,15 +67,7 @@ function displayWeather(data,cityName) {
 
   // Add searched city
   citiesList.add(cityName);
-  // let searched = document.createElement("a");
-  // searched.innerHTML = cityName;
-  // searched.classList = 'button card m-2 p-2';
-  // searched.addEventListener('click', research)
-  // searchedEl.append(searched);
   makeButtons();
-
-  // update local storage with city list
-
 
   // Clearing weather and forecast blocks
   Array.from(summaryEl.children).forEach((child) => {
@@ -102,7 +90,7 @@ function displayWeather(data,cityName) {
   timeEl.innerHTML = moment.unix(data.current.dt).format("MMMM DD, YYYY");
   summaryEl.append(timeEl);
 
-  // First forecast as current weather?
+  // Current weather
   let iconMain = document.createElement("img");
   iconMain.setAttribute("src","https://openweathermap.org/img/w/"+data.current.weather[0].icon+".png");
   iconMain.setAttribute("style","width:75px")
@@ -122,8 +110,11 @@ function displayWeather(data,cityName) {
 
   let uv = document.createElement("p");
   uv.innerHTML = 'UVI: ' + (data.current.uvi);
-  summaryEl.append(uv)
-
+  
+  // 2 or less: Low. A UV Index reading of 2 or less means low danger from the sun's UV rays for the average person: ...
+  // 3 - 5: Moderate. A UV Index reading of 3 to 5 means moderate risk of harm from unprotected sun exposure. ...
+  // 6 - 7: High. ...
+  // 8 - 10: Very High.
   if (data.current.uvi <= 2) {
     uv.setAttribute("style","background-color:green;");
   } else if (data.current.uvi <= 5) {
@@ -134,11 +125,7 @@ function displayWeather(data,cityName) {
     uv.setAttribute("style","background-color:red;");
   }
 
-  // 2 or less: Low. A UV Index reading of 2 or less means low danger from the sun's UV rays for the average person: ...
-  // 3 - 5: Moderate. A UV Index reading of 3 to 5 means moderate risk of harm from unprotected sun exposure. ...
-  // 6 - 7: High. ...
-  // 8 - 10: Very High.
-
+  summaryEl.append(uv)
 
   // Start 5-day forecast block
 

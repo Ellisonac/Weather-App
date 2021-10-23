@@ -3,6 +3,7 @@ var summaryEl = document.querySelector("#weather-summary");
 var cardsEl = document.querySelector("#weather-day-cards");
 var searchedEl = document.querySelector("#searched-cities");
 var uvi;
+var citiesList = new Set();
 
 //Call format: https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
 
@@ -60,7 +61,6 @@ function KtoF(temperature) {
 }
 
 function research(e) {
-  console.log(this)
   document.querySelector("#location").value = this.innerHTML;
   callWeatherApi(e);
   
@@ -68,16 +68,18 @@ function research(e) {
 }
 
 function displayWeather(data,cityName) {
-  console.log(data)
 
   // Add searched city
-  let searched = document.createElement("a");
-  searched.innerHTML = cityName;
-  searched.classList = 'button card m-2 p-2';
-  searched.addEventListener('click', research)
-  searchedEl.append(searched);
+  citiesList.add(cityName);
+  // let searched = document.createElement("a");
+  // searched.innerHTML = cityName;
+  // searched.classList = 'button card m-2 p-2';
+  // searched.addEventListener('click', research)
+  // searchedEl.append(searched);
+  makeButtons();
 
   // update local storage with city list
+
 
   // Clearing weather and forecast blocks
   Array.from(summaryEl.children).forEach((child) => {
@@ -103,7 +105,7 @@ function displayWeather(data,cityName) {
   // First forecast as current weather?
   let iconMain = document.createElement("img");
   iconMain.setAttribute("src","https://openweathermap.org/img/w/"+data.current.weather[0].icon+".png");
-  iconMain.setAttribute("style","width:50px")
+  iconMain.setAttribute("style","width:75px")
   summaryEl.append(iconMain);
 
   let temp = document.createElement("p");
@@ -122,14 +124,28 @@ function displayWeather(data,cityName) {
   uv.innerHTML = 'UVI: ' + (data.current.uvi);
   summaryEl.append(uv)
 
+  if (data.current.uvi <= 2) {
+    uv.setAttribute("style","background-color:green;");
+  } else if (data.current.uvi <= 5) {
+    uv.setAttribute("style","background-color:yellow;");
+  } else if (data.current.uvi <= 7) {
+    uv.setAttribute("style","background-color:orange;");
+  } else {
+    uv.setAttribute("style","background-color:red;");
+  }
+
+  // 2 or less: Low. A UV Index reading of 2 or less means low danger from the sun's UV rays for the average person: ...
+  // 3 - 5: Moderate. A UV Index reading of 3 to 5 means moderate risk of harm from unprotected sun exposure. ...
+  // 6 - 7: High. ...
+  // 8 - 10: Very High.
+
 
   // Start 5-day forecast block
 
-  let title = document.createElement('h2');
-  title.innerHTML = "5-Day Forecast";
-  cardsEl.append(title);
+  document.querySelector("#forecast-title").setAttribute("style","display:block")
 
-  data.daily.forEach((forecast) => {
+  for (let ii=0; ii<5; ii++) {
+    forecast = data.daily[ii];
     let block = document.createElement('div');
     block.classList = "card m-2 p-2";
     
@@ -140,22 +156,62 @@ function displayWeather(data,cityName) {
     // change to icon
     let icon = document.createElement("img");
     icon.setAttribute("src","https://openweathermap.org/img/w/"+forecast.weather[0].icon+".png");
-    icon.setAttribute("style","width:50px")
+    icon.setAttribute("style","width:75px")
     block.append(icon);
 
-    let dayTemp = document.createElement('p');
-    dayTemp.innerHTML = Math.round(KtoF(forecast.temp.day))+ ' &#176;F';
-    block.append(dayTemp);
+
+    temp = document.createElement("p");
+    temp.innerHTML = 'Temp: ' + Math.round(KtoF(data.current.temp)) + ' &#176;F';
+    block.append(temp)
+
+    hum = document.createElement("p");
+    hum.innerHTML = 'Hum: ' + (data.current.humidity) + '%';
+    block.append(hum)
+
+    wind = document.createElement("p");
+    wind.innerHTML = 'Wind: ' + (data.current.wind_speed) + ' MPH';
+    block.append(wind)
     
     cardsEl.append(block);
-    // temps.push(KtoF(forecast.temp.day));
-
-  })
-  
-
-  
-
+  }
 
 }
+
+function initialLoad() {
+  var previousCitiesButtons = localStorage.getItem("previousCities");
+  if (previousCitiesButtons) {
+    let savedData = JSON.parse(previousCitiesButtons);
+    Array.from(savedData).forEach((city) => {
+      citiesList.add(city);
+    })
+    makeButtons();
+  }
+}
+
+function makeButtons() {
+  // Clearing current buttons
+  Array.from(searchedEl.children).forEach((child) => {
+    searchedEl.removeChild(child);
+  })
+
+  citiesList.forEach((city) => {
+    let newBtn = document.createElement("button");
+
+    newBtn.textContent = city;
+    newBtn.classList = "btn btn-secondary m-1";
+
+    newBtn.addEventListener("click", function (e) {
+      document.querySelector("#location").value = this.innerHTML;
+      callWeatherApi(e);
+    });
+
+
+    searchedEl.append(newBtn);
+  })
+
+  localStorage.setItem("previousCities", JSON.stringify(Array.from(citiesList)));
+}
+
+initialLoad()
 
 document.querySelector("#submit-button").addEventListener("click",callWeatherApi);

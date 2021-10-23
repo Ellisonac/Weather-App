@@ -59,14 +59,25 @@ function KtoF(temperature) {
   return (temperature-273.15)*9/5 + 32;
 }
 
+function research(e) {
+  console.log(this)
+  document.querySelector("#location").value = this.innerHTML;
+  callWeatherApi(e);
+  
+  this.style.display = 'none';
+}
+
 function displayWeather(data,cityName) {
   console.log(data)
 
   // Add searched city
   let searched = document.createElement("a");
   searched.innerHTML = cityName;
-  searched.classList = 'button card m-2';
+  searched.classList = 'button card m-2 p-2';
+  searched.addEventListener('click', research)
   searchedEl.append(searched);
+
+  // update local storage with city list
 
   // Clearing weather and forecast blocks
   Array.from(summaryEl.children).forEach((child) => {
@@ -90,9 +101,10 @@ function displayWeather(data,cityName) {
   summaryEl.append(timeEl);
 
   // First forecast as current weather?
-  let weatherEl = document.createElement("p");
-  weatherEl.innerHTML = data.current.weather[0].main;
-  summaryEl.append(weatherEl);
+  let iconMain = document.createElement("img");
+  iconMain.setAttribute("src","https://openweathermap.org/img/w/"+data.current.weather[0].icon+".png");
+  iconMain.setAttribute("style","width:50px")
+  summaryEl.append(iconMain);
 
   let temp = document.createElement("p");
   temp.innerHTML = 'Temperature: ' + Math.round(KtoF(data.current.temp)) + ' &#176;F';
@@ -125,9 +137,11 @@ function displayWeather(data,cityName) {
     day.innerHTML = moment.unix(forecast.dt).format('ddd');
     block.append(day);
 
-    let type = document.createElement('p');
-    type.innerHTML = forecast.weather[0].main;
-    block.append(type);
+    // change to icon
+    let icon = document.createElement("img");
+    icon.setAttribute("src","https://openweathermap.org/img/w/"+forecast.weather[0].icon+".png");
+    icon.setAttribute("style","width:50px")
+    block.append(icon);
 
     let dayTemp = document.createElement('p');
     dayTemp.innerHTML = Math.round(KtoF(forecast.temp.day))+ ' &#176;F';
